@@ -17,6 +17,9 @@ interface GamerHoverCardProps {
   joinedDate?: string;
   avatarUrl?: string;
   link: string;
+  bgPath?: string;
+  onHoverEnter?: () => void;
+  onHoverLeave?: () => void;
 }
 
 export default function GamerHoverCard({
@@ -27,9 +30,16 @@ export default function GamerHoverCard({
   joinedDate,
   avatarUrl,
   link,
+  onHoverEnter,
+  onHoverLeave,
 }: GamerHoverCardProps) {
   return (
-    <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
+    <motion.div
+      onMouseEnter={onHoverEnter}
+      onMouseLeave={onHoverLeave}
+      whileHover={{ scale: 1.2 }}
+      whileTap={{ scale: 0.8 }}
+    >
       <HoverCard openDelay={10} closeDelay={100}>
         <HoverCardTrigger asChild>
           <Link

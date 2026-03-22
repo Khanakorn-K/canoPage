@@ -1,13 +1,25 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Volume2, VolumeX } from "lucide-react";
 import GamerHoverCard from "./components/GamerHoverCard";
 
 export default function Hero() {
-  const [volume, setVolume] = useState(0);
+  const [volume, setVolume] = useState<number>(0.5);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const defaultBg = "/LandingIndex/footageFootball.mp4";
+  const [currentPathBg, setCurrentPathBg] = useState<string>(defaultBg);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = volume;
+      videoRef.current.muted = volume === 0;
+      videoRef.current
+        .play()
+        .catch((e) => console.error("Autoplay blocked:", e));
+    }
+  }, [currentPathBg, volume]);
 
   const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
@@ -23,9 +35,11 @@ export default function Hero() {
       if (videoRef.current.volume > 0) {
         videoRef.current.volume = 0;
         setVolume(0);
+        videoRef.current.muted = true;
       } else {
         videoRef.current.volume = 0.5;
         setVolume(0.5);
+        videoRef.current.muted = false;
       }
     }
   };
@@ -35,13 +49,11 @@ export default function Hero() {
       <video
         ref={videoRef}
         autoPlay
-        muted
         loop
         playsInline
-        className="absolute inset-0 h-full w-full object-cover"
-      >
-        <source src="/LandingIndex/footageFootball.mp4" type="video/mp4" />
-      </video>
+        src={currentPathBg}
+        className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+      />
 
       <div className="absolute inset-0 bg-black/50" />
 
@@ -69,18 +81,8 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center text-white">
-        <div className="mb-6 rounded-full border-4 border-white p-4">
-          <div className="h-12 w-12 rounded-full border-4 border-white border-t-transparent animate-spin" />
-        </div>
-
-        {/* <h1 className="mb-4 text-5xl font-bold md:text-7xl">Miri UI Kit</h1>
-
-        <p className="mb-8 max-w-2xl text-lg md:text-xl">
-          A beautiful free bootstrap 4 UI Kit developed by BootstrapDash.
-        </p> */}
-
-        <div className="flex flex-wrap justify-center gap-4">
+      <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-5xl mx-auto">
           <GamerHoverCard
             role={["DPS", "Tank", "SupPort"]}
             cardName="OverWatch"
@@ -89,6 +91,8 @@ export default function Hero() {
             joinedDate="2015"
             description={["zecano#3583"]}
             link=""
+            onHoverEnter={() => setCurrentPathBg("/LandingIndex/MccreeBg.mp4")}
+            onHoverLeave={() => setCurrentPathBg(defaultBg)}
           />
           <GamerHoverCard
             cardName="FaceBook"
@@ -96,14 +100,12 @@ export default function Hero() {
             description={["Manop Cano"]}
             link="https://www.facebook.com/manop.cano"
           />
-
           <GamerHoverCard
             cardName="Instagram"
             avatarUrl="/LandingIndex/Instagram-Logo.wine.svg"
             link="https://www.instagram.com/manopcano"
             description={["manopcano"]}
           />
-
           <GamerHoverCard
             cardName="TikTok"
             avatarUrl="/LandingIndex/TikTok-Logo.wine.svg"
